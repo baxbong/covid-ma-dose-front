@@ -1,12 +1,12 @@
 <template>
   <div :style="{backgroundColor: bgColor}">
     <h1>Covid Ma Dose - Rennes</h1>
-      <div v-if="posts.length === 0">Aucune dose disponible à Rennes pour l'instant. Patientez...</div>
-      <div>Dernière mise à jour le {{ lastUpdate }}</div>
-      <div v-for="doctolink in posts" :key="doctolink.id">
+    <div v-if="posts.length !== 0">Aucune dose disponible à Rennes pour l'instant. Patientez...</div>
+    <div>Dernière mise à jour le {{ lastUpdate }}</div>
+    <div v-for="doctolink in posts" :key="doctolink.id">
         <a :href="doctolink.url ">{{ doctolink.nom }}</a>
-      </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -29,6 +29,37 @@
     },
 
     methods: {
+
+      notifyMe() {
+        // Let's check if the browser supports notifications
+        if (!("Notification" in window)) {
+          alert("This browser does not support desktop notification");
+        }
+
+        // Let's check whether notification permissions have already been granted
+        else if (Notification.permission === "granted") {
+          // If it's okay let's create a notification
+          var notification = new Notification("Une nouvelle dose est disponible");
+          notification.onclick = function(event) {
+            event.preventDefault(); // empêcher le navigateur de passer le focus sur l'onglet de la navigation
+            window.open('https://covid-ma-dose.herokuapp.com/', '_blank');
+          }
+        }
+
+        // Otherwise, we need to ask the user for permission
+        else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then(function (permission) {
+            // If the user accepts, let's create a notification
+            if (permission === "granted") {
+              new Notification("Une nouvelle dose est disponible");
+            }
+          });
+        }
+
+        // At last, if the user has denied notifications, and you
+        // want to be respectful there is no need to bother them any more.
+      },
+
       fetchEventsList () {
         HTTP({
           method: 'get',
@@ -39,6 +70,7 @@
           this.posts = response.data
           if(this.posts.length > 0) {
             this.bgColor = '#99ccff'
+            this.notifyMe();
           } else {
             this.bgColor = 'white'
           }
