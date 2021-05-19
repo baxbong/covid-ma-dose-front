@@ -1,8 +1,8 @@
 <template>
   <div :style="{backgroundColor: bgColor}">
     <h1>Covid Ma Dose - Rennes</h1>
-      <div v-for="doctolink in posts" :key="doctolink.urlToGo">
-        <a :href="doctolink.urlToGo ">{{ doctolink.urlToGo }}</a>
+      <div v-for="doctolink in posts" :key="doctolink.id">
+        <a :href="doctolink.url ">{{ doctolink.nom }}</a>
       </div>
     </div>
 </template>
@@ -29,7 +29,7 @@
       fetchEventsList () {
         HTTP({
           method: 'get',
-          url: '/'
+          url: '/rennes'
         }).then(response => {
           this.posts = response.data
           if(this.posts.length > 0) {
@@ -67,7 +67,7 @@
     margin: 0 10px;
   }
   a {
-    color: #42b983;
+    color: #ff0000;
   }
 
 </style>
