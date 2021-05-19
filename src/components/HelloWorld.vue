@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div :style="{backgroundColor: bgColor}">
     <h1>Covid Ma Dose - Rennes</h1>
       <div v-for="doctolink in posts" :key="doctolink.urlToGo">
         <a :href="doctolink.urlToGo ">{{ doctolink.urlToGo }}</a>
@@ -15,7 +15,8 @@
       return {
         posts: [],
         errors: [],
-        timer: ''
+        timer: '',
+        bgColor: 'white'
       }
     },
 
@@ -31,10 +32,15 @@
           url: '/'
         }).then(response => {
           this.posts = response.data
+          if(this.posts.length > 0) {
+            this.bgColor = '#99ccff'
+          } else {
+            this.bgColor = 'white'
+          }
         })
-                .catch(e => {
-                  this.errors.push(e)
-                })
+        .catch(e => {
+          this.errors.push(e)
+        })
       },
       cancelAutoUpdate () {
         clearInterval(this.timer);
@@ -63,4 +69,5 @@
   a {
     color: #42b983;
   }
+
 </style>
