@@ -1,5 +1,5 @@
 import axios from 'axios';
 
 export const HTTP = axios.create({
-    baseURL: "http://localhost:8082"
+    baseURL: process.env.VUE_APP_COVID_MA_DOSE
 })
