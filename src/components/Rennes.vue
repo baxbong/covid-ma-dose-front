@@ -1,6 +1,8 @@
 <template>
   <div :style="{backgroundColor: bgColor}">
     <h1>Covid Ma Dose - Rennes</h1>
+      <div v-if="posts.length === 0">Aucune dose disponible à Rennes pour l'instant. Patientez...</div>
+      <div>Dernière mise à jour à {{ lastUpdate }}</div>
       <div v-for="doctolink in posts" :key="doctolink.id">
         <a :href="doctolink.url ">{{ doctolink.nom }}</a>
       </div>
@@ -15,6 +17,7 @@
       return {
         posts: [],
         errors: [],
+        lastUpdate: '',
         timer: '',
         bgColor: 'white'
       }
@@ -31,6 +34,7 @@
           method: 'get',
           url: '/rennes'
         }).then(response => {
+          this.lastUpdate = new Date();
           this.posts = response.data
           if(this.posts.length > 0) {
             this.bgColor = '#99ccff'
@@ -44,7 +48,7 @@
       },
       cancelAutoUpdate () {
         clearInterval(this.timer);
-      }
+      },
     },
     beforeDestroy () {
       this.cancelAutoUpdate();
