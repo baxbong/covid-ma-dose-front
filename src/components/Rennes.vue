@@ -1,7 +1,7 @@
 <template>
   <div :style="{backgroundColor: bgColor}">
     <h1>Covid Ma Dose - Rennes</h1>
-    <div v-if="vaccinationCenters.length === 0">Aucune dose disponible à Rennes pour l'instant. Patientez...</div>
+    <div v-if="vaccinationCenters.length === 0">Aucune chronodose (dose pour aujourd'hui ou demain) disponible à Rennes pour l'instant. Patientez...</div>
     <div>Dernière mise à jour le {{ lastUpdate }}</div>
     <div v-for="vc in vaccinationCenters" :key="vc.id">
         <a :href="vc.url ">{{ vc.nom }}</a>
@@ -24,11 +24,16 @@
     },
 
     created () {
-      this.fetchEventsList();
-      this.timer = setInterval(this.fetchEventsList, 10000);
+      this.requestNotification();
+      this.displayVaccinationsCentersWithDose();
+      this.timer = setInterval(this.displayVaccinationsCentersWithDose, 10000);
     },
 
     methods: {
+
+      requestNotification() {
+        Notification.requestPermission();
+      },
 
       notifyMe() {
         // Let's check if the browser supports notifications
@@ -46,21 +51,11 @@
           }
         }
 
-        // Otherwise, we need to ask the user for permission
-        else if (Notification.permission !== "denied") {
-          Notification.requestPermission().then(function (permission) {
-            // If the user accepts, let's create a notification
-            if (permission === "granted") {
-              new Notification("Une nouvelle dose est disponible");
-            }
-          });
-        }
-
         // At last, if the user has denied notifications, and you
         // want to be respectful there is no need to bother them any more.
       },
 
-      fetchEventsList () {
+      displayVaccinationsCentersWithDose () {
         HTTP({
           method: 'get',
           url: '/rennes'
