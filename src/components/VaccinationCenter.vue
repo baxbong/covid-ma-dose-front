@@ -1,10 +1,10 @@
 <template>
   <div :style="{backgroundColor: bgColor}">
-    <h1>Covid Ma Dose - {{ this.ville }}</h1>
-    <div v-if="vaccinationCenters.length === 0">Aucune chronodose (dose pour aujourd'hui ou demain) disponible à {{ this.ville }} pour l'instant. Patientez...</div>
-    <div>Dernière mise à jour le {{ lastUpdate }}</div>
+    <h1>Covid Ma Dose - {{ this.city }}</h1>
+    <div v-if="vaccinationCenters.length === 0">Aucune chronodose (dose pour aujourd'hui ou demain) disponible à {{ this.city }} pour l'instant. Patientez...</div>
+    <div>Dernière mise à jour le <b>{{ lastUpdate }}</b></div>
     <div v-for="vc in vaccinationCenters" :key="vc.id">
-        <a :href="vc.url ">{{ vc.nom }}</a>
+        <a :href="vc.url ">{{ vc.name }}</a>
     </div>
   </div>
 </template>
@@ -13,7 +13,7 @@
   import {HTTP} from '@/http-common';
   export default {
 
-    props: ['ville'],
+    props: ['city'],
     data() {
       return {
         vaccinationCenters: [],
@@ -45,7 +45,7 @@
         // Let's check whether notification permissions have already been granted
         else if (Notification.permission === "granted") {
           // If it's okay let's create a notification
-          var notification = new Notification("Une nouvelle dose est disponible à " + vc.nom);
+          var notification = new Notification("Une nouvelle dose est disponible à " + vc.name);
           notification.onclick = function(event) {
             event.preventDefault(); // empêcher le navigateur de passer le focus sur l'onglet de la navigation
             window.open(vc.url, '_blank');
@@ -59,7 +59,7 @@
       displayVaccinationsCentersWithDose () {
         HTTP({
           method: 'get',
-          url: this.ville
+          url: "/chronodoses/" + this.city
         }).then(response => {
           var options = {weekday: "long", year: "numeric", month: "long", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"};
           this.lastUpdate = new Date().toLocaleDateString("fr-FR", options);
@@ -82,7 +82,7 @@
     beforeDestroy () {
       this.cancelAutoUpdate();
     },
-    name: 'Bonus'
+    name: 'VaccinationCenter'
   }
 </script>
 
