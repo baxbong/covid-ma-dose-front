@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <Rennes/>
+    <VaccinationCenter ville="Rennes"/>
   </div>
 </template>
 
 <script>
-import Rennes from './components/Rennes.vue'
+import VaccinationCenter from './components/VaccinationCenter.vue'
 
 export default {
   name: 'App',
   components: {
-    Rennes
+    VaccinationCenter
   }
 }
 </script>

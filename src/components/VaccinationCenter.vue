@@ -1,7 +1,7 @@
 <template>
   <div :style="{backgroundColor: bgColor}">
-    <h1>Covid Ma Dose - Rennes</h1>
-    <div v-if="vaccinationCenters.length === 0">Aucune chronodose (dose pour aujourd'hui ou demain) disponible à Rennes pour l'instant. Patientez...</div>
+    <h1>Covid Ma Dose - {{ this.ville }}</h1>
+    <div v-if="vaccinationCenters.length === 0">Aucune chronodose (dose pour aujourd'hui ou demain) disponible à {{ this.ville }} pour l'instant. Patientez...</div>
     <div>Dernière mise à jour le {{ lastUpdate }}</div>
     <div v-for="vc in vaccinationCenters" :key="vc.id">
         <a :href="vc.url ">{{ vc.nom }}</a>
@@ -13,6 +13,7 @@
   import {HTTP} from '@/http-common';
   export default {
 
+    props: ['ville'],
     data() {
       return {
         vaccinationCenters: [],
@@ -58,7 +59,7 @@
       displayVaccinationsCentersWithDose () {
         HTTP({
           method: 'get',
-          url: '/rennes'
+          url: this.ville
         }).then(response => {
           var options = {weekday: "long", year: "numeric", month: "long", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"};
           this.lastUpdate = new Date().toLocaleDateString("fr-FR", options);
