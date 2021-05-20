@@ -35,7 +35,7 @@
         Notification.requestPermission();
       },
 
-      notifyMe() {
+      notifyMe(vc) {
         // Let's check if the browser supports notifications
         if (!("Notification" in window)) {
           alert("This browser does not support desktop notification");
@@ -44,10 +44,10 @@
         // Let's check whether notification permissions have already been granted
         else if (Notification.permission === "granted") {
           // If it's okay let's create a notification
-          var notification = new Notification("Une nouvelle dose est disponible");
+          var notification = new Notification("Une nouvelle dose est disponible à " + vc.nom);
           notification.onclick = function(event) {
             event.preventDefault(); // empêcher le navigateur de passer le focus sur l'onglet de la navigation
-            window.open('https://covid-ma-dose.herokuapp.com/', '_blank');
+            window.open(vc.url, '_blank');
           }
         }
 
@@ -65,7 +65,7 @@
           this.vaccinationCenters = response.data
           if(this.vaccinationCenters.length > 0) {
             this.bgColor = '#99ccff'
-            this.notifyMe();
+            this.vaccinationCenters.forEach(vc => this.notifyMe(vc));
           } else {
             this.bgColor = 'white'
           }
