@@ -1,8 +1,10 @@
 <template>
   <div>
     <h1>Covid Ma Dose - Liste des villes</h1>
+    <p><b>Cliquez sur une ville</b> pour afficher les doses des centres de cette ville. <b>Activez les notifications</b> pour être averti dès qu'une dose est disponible. Vous pouvez réduire le navigateur ou changer d'onglet, mais ne fermez pas l'onglet pour être notifié.</p>
     <div v-for="city in cities" :key="city.id">
-      <router-link :to="city.name">{{ city.name }}</router-link>
+      <h2><router-link :to="city.name">{{ city.name }}</router-link></h2>
+      <label v-for="vc in city.vaccinationCenters" :key="vc.id"><a target="_blank" :href="vc.url">{{ vc.name }}</a> | </label>
     </div>
     <router-view></router-view>
   </div>

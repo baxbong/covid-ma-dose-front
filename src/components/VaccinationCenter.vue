@@ -1,10 +1,10 @@
 <template>
   <div :style="{backgroundColor: bgColor}">
-    <h1>Covid Ma Dose - {{ $route.params.city }}</h1>
+    <h1>Doses disponibles à {{ $route.params.city }}</h1>
     <div v-if="vaccinationCenters.length === 0">Aucune chronodose (dose pour aujourd'hui ou demain) disponible à {{ $route.params.city }} pour l'instant. Patientez...</div>
     <div>Dernière mise à jour le <b>{{ lastUpdate }}</b></div>
     <div v-for="vc in vaccinationCenters" :key="vc.id">
-        <a :href="vc.url ">{{ vc.name }}</a>
+        <a target="_blank" :href="vc.url ">{{ vc.name }}</a>
     </div>
   </div>
 </template>
