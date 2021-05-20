@@ -1,10 +1,10 @@
 <template>
   <div :style="{backgroundColor: bgColor}">
     <h1>Covid Ma Dose - Rennes</h1>
-    <div v-if="posts.length !== 0">Aucune dose disponible à Rennes pour l'instant. Patientez...</div>
+    <div v-if="vaccinationCenters.length === 0">Aucune dose disponible à Rennes pour l'instant. Patientez...</div>
     <div>Dernière mise à jour le {{ lastUpdate }}</div>
-    <div v-for="doctolink in posts" :key="doctolink.id">
-        <a :href="doctolink.url ">{{ doctolink.nom }}</a>
+    <div v-for="vc in vaccinationCenters" :key="vc.id">
+        <a :href="vc.url ">{{ vc.nom }}</a>
     </div>
   </div>
 </template>
@@ -15,7 +15,7 @@
 
     data() {
       return {
-        posts: [],
+        vaccinationCenters: [],
         errors: [],
         lastUpdate: '',
         timer: '',
@@ -67,8 +67,8 @@
         }).then(response => {
           var options = {weekday: "long", year: "numeric", month: "long", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"};
           this.lastUpdate = new Date().toLocaleDateString("fr-FR", options);
-          this.posts = response.data
-          if(this.posts.length > 0) {
+          this.vaccinationCenters = response.data
+          if(this.vaccinationCenters.length > 0) {
             this.bgColor = '#99ccff'
             this.notifyMe();
           } else {
