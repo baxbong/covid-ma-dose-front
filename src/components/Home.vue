@@ -1,21 +1,21 @@
 <template>
   <div>
+    <h1>Covid Ma Dose - Liste des villes</h1>
     <div v-for="city in cities" :key="city.id">
-      <ul>
-        <VaccinationCenter :city="city.name"/>
-      </ul>
+      <router-link :to="city.name">{{ city.name }}</router-link>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
   import {HTTP} from '@/http-common';
-  import VaccinationCenter from "@/components/VaccinationCenter";
+  // import VaccinationCenter from "@/components/VaccinationCenter";
   export default {
 
-    components: {
-      VaccinationCenter
-    },
+    // components: {
+    //   VaccinationCenter
+    // },
 
     data() {
       return {

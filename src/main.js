@@ -8,9 +8,10 @@ Vue.config.productionTip = false
 
 Vue.use(VueRouter)
 
-new VueRouter({routes});
+const router = new VueRouter({routes});
 
 new Vue({
+  router,
   render: h => h(App),
   routes
 }).$mount('#app')
