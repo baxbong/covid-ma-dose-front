@@ -1,12 +1,15 @@
 <template>
-  <div :style="{backgroundColor: bgColor}">
-    <h1>Doses disponibles à {{ $route.params.city }}</h1>
-    <div v-if="vaccinationCenters.length === 0">Aucune chronodose (dose pour aujourd'hui ou demain) disponible à {{ $route.params.city }} pour l'instant. Patientez...</div>
-    <div>Dernière mise à jour le <b>{{ lastUpdate }}</b></div>
-    <div v-for="vc in vaccinationCenters" :key="vc.id">
-        <a target="_blank" :href="vc.url ">{{ vc.name }}</a>
+  <b-container :style="{backgroundColor: bgColor}">
+    <h1>{{ $route.params.city }}</h1>
+    <h2>Centres de vaccinations</h2>
+    <pre><label v-for="vc in vaccinationCenters" :key="vc.id"><a target="_blank" :href="vc.url">{{ vc.name }}</a> </label></pre>
+    <h2>Doses disponibles à {{ $route.params.city }}</h2>
+    <div>Dernière mise à jour le <strong>{{ lastUpdate }}</strong></div>
+    <div v-if="vaccinationCentersWithDose.length === 0">Aucune chronodose (dose pour aujourd'hui ou demain) disponible à {{ $route.params.city }} pour l'instant. Patientez...</div>
+    <div v-for="vc in vaccinationCentersWithDose" :key="vc.id">
+      <a target="_blank" :href="vc.url ">{{ vc.name }}</a>
     </div>
-  </div>
+  </b-container>
 </template>
 
 <script>
@@ -15,7 +18,8 @@
 
     data() {
       return {
-        vaccinationCenters: [],
+        vaccinationCenters:[],
+        vaccinationCentersWithDose: [],
         errors: [],
         lastUpdate: '',
         timer: '',
@@ -25,8 +29,23 @@
 
     created () {
       this.requestNotification();
+      this.displayAllVaccinationsCenters();
       this.displayVaccinationsCentersWithDose();
       this.timer = setInterval(this.displayVaccinationsCentersWithDose, 10000);
+    },
+
+    asyncComputed: {
+      async getAllVaccinationCenters() {
+        return await HTTP({
+          method: 'get',
+          url: "/vaccination-centers/" + this.$route.params.city
+        }).then(response => {
+          this.vaccinationCenters = response.data
+        })
+        .catch(e => {
+          this.errors.push(e)
+        })
+      }
     },
 
     methods: {
@@ -44,12 +63,26 @@
         // Let's check whether notification permissions have already been granted
         else if (Notification.permission === "granted") {
           // If it's okay let's create a notification
-          var notification = new Notification("Une nouvelle dose est disponible à " + vc.name);
+          var notification = new Notification(vc.name);
           notification.onclick = function(event) {
             event.preventDefault(); // empêcher le navigateur de passer le focus sur l'onglet de la navigation
             window.open(vc.url, '_blank');
           }
         }
+      },
+
+      displayAllVaccinationsCenters() {
+
+        HTTP({
+          method: 'get',
+          url: "/vaccination-centers/" + this.$route.params.city
+        }).then(response => {
+          this.vaccinationCenters = response.data
+        })
+        .catch(e => {
+          this.errors.push(e)
+        })
+
       },
 
       displayVaccinationsCentersWithDose () {
@@ -59,10 +92,10 @@
         }).then(response => {
           var options = {weekday: "long", year: "numeric", month: "long", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"};
           this.lastUpdate = new Date().toLocaleDateString("fr-FR", options);
-          this.vaccinationCenters = response.data
-          if(this.vaccinationCenters.length > 0) {
+          this.vaccinationCentersWithDose = response.data
+          if(this.vaccinationCentersWithDose.length > 0) {
             this.bgColor = '#99ccff'
-            this.vaccinationCenters.forEach(vc => this.notifyMe(vc));
+            this.vaccinationCentersWithDose.forEach(vc => this.notifyMe(vc));
           } else {
             this.bgColor = 'white'
           }
@@ -82,21 +115,7 @@
   }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  h3 {
-    margin: 40px 0 0;
-  }
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  li {
-    display: inline-block;
-    margin: 0 10px;
-  }
-  a {
-    color: #ff0000;
-  }
+
 
 </style>
